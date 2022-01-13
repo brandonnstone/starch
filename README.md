@@ -1,21 +1,21 @@
-# starch Installer Script
----
-## Create Arch ISO or Use Image
+# starch
+
+## create arch ISO
 
 Download ArchISO from <https://archlinux.org/download/> and put on a USB drive with [Etcher](https://www.balena.io/etcher/), [Ventoy](https://www.ventoy.net/en/index.html), or [Rufus](https://rufus.ie/en/)
 
-## Boot Arch ISO
+## boot
 
 From initial prompt type the following commands:
 
 ```
 pacman -Sy git
-git clone https://github.com/ChrisTitusTech/starch
+git clone https://github.com/brandonnstone/starch
 cd starch
 ./starch.sh
 ```
 
-### No Wifi
+### no wifi?
 
 You can check if the WiFi is blocked by running `rfkill list`.
 If it says **Soft blocked: yes**, then run `rfkill unblock wifi`
