@@ -1,33 +1,24 @@
 #!/usr/bin/env bash
 echo -ne "
--------------------------------------------------------------------------
-
+------------------------------------------------------------------------------------
       ___                         ___           ___           ___           ___     
      /  /\          ___          /  /\         /  /\         /  /\         /  /\    
     /  /::\        /__/\        /  /::\       /  /::\       /  /::\       /  /:/    
    /__/:/\:\       \  \:\      /  /:/\:\     /  /:/\:\     /  /:/\:\     /  /:/     
   _\_ \:\ \:\       \__\:\    /  /::\ \:\   /  /::\ \:\   /  /:/  \:\   /  /::\ ___ 
- /__/\ \:\ \:\      /  /::\  /__/:/\:\_\:\ /__/:/\:\_\:\ /__/:/ \  \:\ /__/:/\:\  /\
+ /__/\ \:\ \:\      /  /::\  /__/:/\:\_\:\ /__/:/\:\_\:\ /__/:/ \  \:\ /__/:/\:\  /\ 
  \  \:\ \:\_\/     /  /:/\:\ \__\/  \:\/:/ \__\/~|::\/:/ \  \:\  \__\/ \__\/  \:\/:/
   \  \:\_\:\      /  /:/__\/      \__\::/     |  |:|::/   \  \:\            \__\::/ 
    \  \:\/:/     /__/:/           /  /:/      |  |:|\/     \  \:\           /  /:/  
     \  \::/      \__\/           /__/:/       |__|:|~       \  \:\         /__/:/   
      \__\/                       \__\/         \__\|         \__\/         \__\/    
-
--------------------------------------------------------------------------
-                    automated arch installer
-                        SCRIPTHOME: starch
--------------------------------------------------------------------------
-
-installing AUR packs
+------------------------------------------------------------------------------------
+    installing AUR packs
+------------------------------------------------------------------------------------
 "
 # You can solve users running this script as root with this and then doing the same for the next for statement. However I will leave this up to you.
 source $HOME/starch/setup.conf
 
-cd ~
-git clone "https://aur.archlinux.org/yay.git"
-cd ~/yay
-makepkg -si --noconfirm
 cd ~
 touch "~/.cache/zshhistory"
 git clone "https://github.com/brandonnstone/zsh"
@@ -38,14 +29,5 @@ yay -S --noconfirm --needed - < ~/starch/pkg-files/aur-pkgs.txt
 
 export PATH=$PATH:~/.local/bin
 cp -r ~/starch/dotfiles/* ~/.config/
-pip install konsave
-konsave -i ~/starch/kde.knsv
-sleep 1
-konsave -a kde
 
-echo -ne "
--------------------------------------------------------------------------
-                    SYSTEM READY FOR post-setup.sh
--------------------------------------------------------------------------
-"
 exit

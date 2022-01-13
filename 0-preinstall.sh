@@ -2,25 +2,21 @@
 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo -ne "
--------------------------------------------------------------------------
-
+------------------------------------------------------------------------------------
       ___                         ___           ___           ___           ___     
      /  /\          ___          /  /\         /  /\         /  /\         /  /\    
     /  /::\        /__/\        /  /::\       /  /::\       /  /::\       /  /:/    
    /__/:/\:\       \  \:\      /  /:/\:\     /  /:/\:\     /  /:/\:\     /  /:/     
   _\_ \:\ \:\       \__\:\    /  /::\ \:\   /  /::\ \:\   /  /:/  \:\   /  /::\ ___ 
- /__/\ \:\ \:\      /  /::\  /__/:/\:\_\:\ /__/:/\:\_\:\ /__/:/ \  \:\ /__/:/\:\  /\
+ /__/\ \:\ \:\      /  /::\  /__/:/\:\_\:\ /__/:/\:\_\:\ /__/:/ \  \:\ /__/:/\:\  /\ 
  \  \:\ \:\_\/     /  /:/\:\ \__\/  \:\/:/ \__\/~|::\/:/ \  \:\  \__\/ \__\/  \:\/:/
   \  \:\_\:\      /  /:/__\/      \__\::/     |  |:|::/   \  \:\            \__\::/ 
    \  \:\/:/     /__/:/           /  /:/      |  |:|\/     \  \:\           /  /:/  
     \  \::/      \__\/           /__/:/       |__|:|~       \  \:\         /__/:/   
      \__\/                       \__\/         \__\|         \__\/         \__\/    
-
--------------------------------------------------------------------------
-                    automated arch installer
--------------------------------------------------------------------------
-
-setting up mirrors for optimal download
+------------------------------------------------------------------------------------
+    setting up mirrors for optimal download
+------------------------------------------------------------------------------------
 "
 source setup.conf
 iso=$(curl -4 ifconfig.co/country-iso)
@@ -31,22 +27,22 @@ sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -S --noconfirm reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -ne "
--------------------------------------------------------------------------
-                    setting up $iso mirrors for optimal download
--------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+    setting up $iso mirrors for optimal download
+------------------------------------------------------------------------------------
 "
 reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt &>/dev/null # Hiding error message if any
 echo -ne "
--------------------------------------------------------------------------
-                    installing prereqs
--------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+    installing prereqs
+------------------------------------------------------------------------------------
 "
 pacman -S --noconfirm gptfdisk btrfs-progs
 echo -ne "
--------------------------------------------------------------------------
-                    formatting disk
--------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+    formatting disk
+------------------------------------------------------------------------------------
 "
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
@@ -61,9 +57,9 @@ if [[ ! -d "/sys/firmware/efi" ]]; then # Checking for bios system
 fi
 # make filesystems
 echo -ne "
--------------------------------------------------------------------------
-                    creating fs
--------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+    creating fs
+------------------------------------------------------------------------------------
 "
 createsubvolumes () {
     btrfs subvolume create /mnt/@
@@ -132,16 +128,16 @@ mkdir /mnt/boot/efi
 mount -t vfat -L EFIBOOT /mnt/boot/
 
 if ! grep -qs '/mnt' /proc/mounts; then
-    echo "drive not mounted. can not continue"
+    echo "drive not mounted. stopping"
     echo "rebooting in 3 ..." && sleep 1
     echo "rebooting in 2 ..." && sleep 1
     echo "rebooting in 1 ..." && sleep 1
     reboot now
 fi
 echo -ne "
--------------------------------------------------------------------------
-                    install on main drive
--------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+    installing on main disk
+------------------------------------------------------------------------------------
 "
 pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -149,17 +145,17 @@ echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
 cp -R ${SCRIPT_DIR} /mnt/root/starch
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 echo -ne "
--------------------------------------------------------------------------
-                    GRUB BIOS install & check
--------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+    BIOS install & check
+------------------------------------------------------------------------------------
 "
 if [[ ! -d "/sys/firmware/efi" ]]; then
     grub-install --boot-directory=/mnt/boot ${DISK}
 fi
 echo -ne "
--------------------------------------------------------------------------
-                    checking for low mem systems (<8G)
--------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+    checking for low mem systems (<8G)
+------------------------------------------------------------------------------------
 "
 TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[  $TOTALMEM -lt 8000000 ]]; then
@@ -174,8 +170,3 @@ if [[  $TOTALMEM -lt 8000000 ]]; then
     # The line below is written to /mnt/ but doesn't contain /mnt/, since it's just / for the system itself.
     echo "/opt/swap/swapfile	none	swap	sw	0	0" >> /mnt/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
 fi
-echo -ne "
--------------------------------------------------------------------------
-                    SYSTEM READY FOR setup.sh
--------------------------------------------------------------------------
-"
