@@ -1,0 +1,11 @@
+autojump
+lightly-git
+lightlyshaders-git
+mangohud
+mangohud-common
+nerd-fonts-fira-code
+ocs-url
+sddm-nordic-theme-git
+snapper-gui-git
+ttf-meslo
+
