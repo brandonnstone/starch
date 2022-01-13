@@ -1,26 +1,19 @@
 #!/usr/bin/env bash
-#-------------------------------------------------------------------------
-#   █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
-#  ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
-#  ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
-#  ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
-#  ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
-#  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
-#-------------------------------------------------------------------------
+
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo -ne "
 -------------------------------------------------------------------------
-   █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
-  ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
-  ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
-  ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
-  ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
-  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
+   ________  ________  ________  ________  ________  ________ 
+  ╱        ╲╱        ╲╱        ╲╱        ╲╱        ╲╱    ╱   ╲
+ ╱        _╱        _╱         ╱         ╱         ╱         ╱
+╱-        ╱╱       ╱╱         ╱        _╱       --╱         ╱ 
+╲________╱ ╲______╱ ╲___╱____╱╲____╱___╱╲________╱╲___╱____╱  
+
 -------------------------------------------------------------------------
-                    Automated Arch Linux Installer
+                    automated arch installer
 -------------------------------------------------------------------------
 
-Setting up mirrors for optimal download
+setting up mirrors for optimal download
 "
 source setup.conf
 iso=$(curl -4 ifconfig.co/country-iso)
@@ -32,20 +25,20 @@ pacman -S --noconfirm reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -ne "
 -------------------------------------------------------------------------
-                    Setting up $iso mirrors for faster downloads
+                    setting up $iso mirrors for optimal download
 -------------------------------------------------------------------------
 "
 reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt &>/dev/null # Hiding error message if any
 echo -ne "
 -------------------------------------------------------------------------
-                    Installing Prerequisites
+                    installing prereqs
 -------------------------------------------------------------------------
 "
 pacman -S --noconfirm gptfdisk btrfs-progs
 echo -ne "
 -------------------------------------------------------------------------
-                    Formating Disk
+                    formatting disk
 -------------------------------------------------------------------------
 "
 # disk prep
@@ -62,7 +55,7 @@ fi
 # make filesystems
 echo -ne "
 -------------------------------------------------------------------------
-                    Creating Filesystems
+                    creating fs
 -------------------------------------------------------------------------
 "
 createsubvolumes () {
@@ -132,25 +125,25 @@ mkdir /mnt/boot/efi
 mount -t vfat -L EFIBOOT /mnt/boot/
 
 if ! grep -qs '/mnt' /proc/mounts; then
-    echo "Drive is not mounted can not continue"
-    echo "Rebooting in 3 Seconds ..." && sleep 1
-    echo "Rebooting in 2 Seconds ..." && sleep 1
-    echo "Rebooting in 1 Second ..." && sleep 1
+    echo "drive not mounted. can not continue"
+    echo "rebooting in 3 ..." && sleep 1
+    echo "rebooting in 2 ..." && sleep 1
+    echo "rebooting in 1 ..." && sleep 1
     reboot now
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    Arch Install on Main Drive
+                    install on main drive
 -------------------------------------------------------------------------
 "
 pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
 genfstab -U /mnt >> /mnt/etc/fstab
 echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
-cp -R ${SCRIPT_DIR} /mnt/root/ArchTitus
+cp -R ${SCRIPT_DIR} /mnt/root/starch
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 echo -ne "
 -------------------------------------------------------------------------
-                    GRUB BIOS Bootloader Install & Check
+                    GRUB BIOS install & check
 -------------------------------------------------------------------------
 "
 if [[ ! -d "/sys/firmware/efi" ]]; then
@@ -158,7 +151,7 @@ if [[ ! -d "/sys/firmware/efi" ]]; then
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    Checking for low memory systems <8G
+                    checking for low mem systems (<8G)
 -------------------------------------------------------------------------
 "
 TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
@@ -176,6 +169,6 @@ if [[  $TOTALMEM -lt 8000000 ]]; then
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    SYSTEM READY FOR 1-setup.sh
+                    SYSTEM READY FOR setup.sh
 -------------------------------------------------------------------------
 "

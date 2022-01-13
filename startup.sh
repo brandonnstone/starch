@@ -21,14 +21,13 @@ logo () {
 # This will be shown on every set as user is progressing
 echo -ne "
 -------------------------------------------------------------------------
- █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
-██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
-███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
-██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
-██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
-╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
+   ________  ________  ________  ________  ________  ________ 
+  ╱        ╲╱        ╲╱        ╲╱        ╲╱        ╲╱    ╱   ╲
+ ╱        _╱        _╱         ╱         ╱         ╱         ╱
+╱-        ╱╱       ╱╱         ╱        _╱       --╱         ╱ 
+╲________╱ ╲______╱ ╲___╱____╱╲____╱___╱╲________╱╲___╱____╱  
 ------------------------------------------------------------------------
-            Please select presetup settings for your system              
+            please select presetup settings for your system              
 ------------------------------------------------------------------------
 "
 }
@@ -47,34 +46,34 @@ case $FS in
 1) set_option FS btrfs;;
 2) set_option FS ext4;;
 3) 
-echo -ne "Please enter your luks password: "
+echo -ne "please enter your luks password: "
 read -s luks_password # read password without echo
 set_option luks_password $luks_password
 set_option FS luks;;
 0) exit ;;
-*) echo "Wrong option please select again"; filesystem;;
+*) echo "wrong option please select again"; filesystem;;
 esac
 }
 timezone () {
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
 time_zone="$(curl --fail https://ipapi.co/timezone)"
-echo -ne "System detected your timezone to be '$time_zone' \n"
-echo -ne "Is this correct? yes/no:" 
+echo -ne "system detected your timezone to be '$time_zone' \n"
+echo -ne "is this correct? yes/no:" 
 read answer
 case $answer in
     y|Y|yes|Yes|YES)
     set_option TIMEZONE $time_zone;;
     n|N|no|NO|No)
-    echo "Please enter your desired timezone e.g. Europe/London :" 
+    echo "please enter your desired timezone e.g. Europe/London :" 
     read new_timezone
     set_option TIMEZONE $new_timezone;;
-    *) echo "Wrong option. Try again";timezone;;
+    *) echo "wrong option please select again";timezone;;
 esac
 }
 keymap () {
 # These are default key maps as presented in official arch repo archinstall
 echo -ne "
-Please select key board layout from this list
+please select keyboard layout from the list
     -by
     -ca
     -cf
@@ -104,13 +103,13 @@ Please select key board layout from this list
     -us
 
 "
-read -p "Your key boards layout:" keymap
+read -p "your keyboard's layout:" keymap
 set_option KEYMAP $keymap
 }
 
 drivessd () {
 echo -ne "
-Is this an ssd? yes/no:
+is this an ssd? yes/no:
 "
 read ssd_drive
 
@@ -119,7 +118,7 @@ case $ssd_drive in
     echo "mountoptions=noatime,compress=zstd,ssd,commit=120" >> setup.conf;;
     n|N|no|NO|No)
     echo "mountoptions=noatime,compress=zstd,commit=120" >> setup.conf;;
-    *) echo "Wrong option. Try again";drivessd;;
+    *) echo "wrong option please select again";drivessd;;
 esac
 }
 
@@ -134,7 +133,7 @@ echo -ne "
     after formating your disk there is no way to get data back      
 ------------------------------------------------------------------------
 
-Please enter full path to disk: (example /dev/sda):
+please enter full path to disk: (example /dev/sda):
 "
 read option
 echo "DISK=$option" >> setup.conf
@@ -143,12 +142,12 @@ drivessd
 set_option DISK $option
 }
 userinfo () {
-read -p "Please enter your username: " username
+read -p "please enter your username: " username
 set_option USERNAME ${username,,} # convert to lower case as in issue #109 
-echo -ne "Please enter your password: \n"
+echo -ne "please enter your password: \n"
 read -s password # read password without echo
 set_option PASSWORD $password
-read -rep "Please enter your hostname: " nameofmachine
+read -rep "please enter your hostname: " nameofmachine
 set_option nameofmachine $nameofmachine
 }
 # More features in future

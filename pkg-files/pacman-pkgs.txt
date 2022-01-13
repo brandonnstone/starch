@@ -48,7 +48,6 @@ fuse3
 fuseiso
 gamemode
 gcc
-gimp
 git
 gparted
 gptfdisk

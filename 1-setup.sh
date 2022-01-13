@@ -1,28 +1,28 @@
 #!/usr/bin/env bash
 echo -ne "
 -------------------------------------------------------------------------
-   █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
-  ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
-  ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
-  ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
-  ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
-  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
+   ________  ________  ________  ________  ________  ________ 
+  ╱        ╲╱        ╲╱        ╲╱        ╲╱        ╲╱    ╱   ╲
+ ╱        _╱        _╱         ╱         ╱         ╱         ╱
+╱-        ╱╱       ╱╱         ╱        _╱       --╱         ╱ 
+╲________╱ ╲______╱ ╲___╱____╱╲____╱___╱╲________╱╲___╱____╱  
+
 -------------------------------------------------------------------------
-                    Automated Arch Linux Installer
-                        SCRIPTHOME: ArchTitus
+                    automated arch installer
+                        SCRIPTHOME: starch
 -------------------------------------------------------------------------
 "
-source /root/ArchTitus/setup.conf
+source /root/starch/setup.conf
 echo -ne "
 -------------------------------------------------------------------------
-                    Network Setup 
+                    network
 -------------------------------------------------------------------------
 "
 pacman -S networkmanager dhclient --noconfirm --needed
 systemctl enable --now NetworkManager
 echo -ne "
 -------------------------------------------------------------------------
-                    Setting up mirrors for optimal download 
+                    setting up mirrors for optimal download 
 -------------------------------------------------------------------------
 "
 pacman -S --noconfirm pacman-contrib curl
@@ -32,9 +32,8 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 nc=$(grep -c ^processor /proc/cpuinfo)
 echo -ne "
 -------------------------------------------------------------------------
-                    You have " $nc" cores. And
-			changing the makeflags for "$nc" cores. Aswell as
-				changing the compression settings.
+                    you have " $nc" cores.
+                    changing the makeflags for "$nc" cores. 
 -------------------------------------------------------------------------
 "
 TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
@@ -44,7 +43,7 @@ sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    Setup Language to US and set locale  
+                    set locale  
 -------------------------------------------------------------------------
 "
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
@@ -68,34 +67,34 @@ pacman -Sy --noconfirm
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Installing Base System  
+                    installing base 
 -------------------------------------------------------------------------
 "
-cat /root/ArchTitus/pkg-files/pacman-pkgs.txt | while read line 
+cat /root/starch/pkg-files/pacman-pkgs.txt | while read line 
 do
     echo "INSTALLING: ${line}"
    sudo pacman -S --noconfirm --needed ${line}
 done
 echo -ne "
 -------------------------------------------------------------------------
-                    Installing Microcode
+                    installing microcode
 -------------------------------------------------------------------------
 "
 # determine processor type and install microcode
 proc_type=$(lscpu)
 if grep -E "GenuineIntel" <<< ${proc_type}; then
-    echo "Installing Intel microcode"
+    echo "INSTALLING: Intel microcode"
     pacman -S --noconfirm intel-ucode
     proc_ucode=intel-ucode.img
 elif grep -E "AuthenticAMD" <<< ${proc_type}; then
-    echo "Installing AMD microcode"
+    echo "INSTALLING: AMD microcode"
     pacman -S --noconfirm amd-ucode
     proc_ucode=amd-ucode.img
 fi
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Installing Graphics Drivers
+                    installing graphics drivers
 -------------------------------------------------------------------------
 "
 # Graphics Drivers find and install
@@ -111,48 +110,48 @@ elif grep -E "Intel Corporation UHD" <<< ${gpu_type}; then
     pacman -S libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa --needed --noconfirm
 fi
 #SETUP IS WRONG THIS IS RUN
-if ! source /root/ArchTitus/setup.conf; then
+if ! source /root/starch/setup.conf; then
 	# Loop through user input until the user gives a valid username
 	while true
 	do 
-		read -p "Please enter username:" username
+		read -p "please enter username:" username
 		# username regex per response here https://unix.stackexchange.com/questions/157426/what-is-the-regex-to-validate-linux-users
 		# lowercase the username to test regex
 		if [[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]
 		then 
 			break
 		fi 
-		echo "Incorrect username."
+		echo "wrong username :("
 	done 
 # convert name to lowercase before saving to setup.conf
-echo "username=${username,,}" >> ${HOME}/ArchTitus/setup.conf
+echo "username=${username,,}" >> ${HOME}/starch/setup.conf
 
     #Set Password
-    read -p "Please enter password:" password
-echo "password=${password,,}" >> ${HOME}/ArchTitus/setup.conf
+    read -p "please enter password:" password
+echo "password=${password,,}" >> ${HOME}/starch/setup.conf
 
     # Loop through user input until the user gives a valid hostname, but allow the user to force save 
 	while true
 	do 
-		read -p "Please name your machine:" nameofmachine
+		read -p "please name your machine:" nameofmachine
 		# hostname regex (!!couldn't find spec for computer name!!)
 		if [[ "${nameofmachine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
 		then 
 			break 
 		fi 
 		# if validation fails allow the user to force saving of the hostname
-		read -p "Hostname doesn't seem correct. Do you still want to save it? (y/n)" force 
+		read -p "hostname doesn't seem correct. do you still want to save it? (y/n)" force 
 		if [[ "${force,,}" = "y" ]]
 		then 
 			break 
 		fi 
 	done 
 
-    echo "nameofmachine=${nameofmachine,,}" >> ${HOME}/ArchTitus/setup.conf
+    echo "nameofmachine=${nameofmachine,,}" >> ${HOME}/starch/setup.conf
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    Adding User
+                    adding user
 -------------------------------------------------------------------------
 "
 if [ $(whoami) = "root"  ]; then
@@ -161,12 +160,12 @@ if [ $(whoami) = "root"  ]; then
 
 # use chpasswd to enter $USERNAME:$password
     echo "$USERNAME:$PASSWORD" | chpasswd
-	cp -R /root/ArchTitus /home/$USERNAME/
-    chown -R $USERNAME: /home/$USERNAME/ArchTitus
+	cp -R /root/starch /home/$USERNAME/
+    chown -R $USERNAME: /home/$USERNAME/starch
 # enter $nameofmachine to /etc/hostname
 	echo $nameofmachine > /etc/hostname
 else
-	echo "You are already a user proceed with aur installs"
+	echo "you are already a user. proceed with aur installs"
 fi
 if [[ ${FS} == "luks" ]]; then
 # Making sure to edit mkinitcpio conf if luks is selected
@@ -177,6 +176,6 @@ if [[ ${FS} == "luks" ]]; then
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    SYSTEM READY FOR 2-user.sh
+                    SYSTEM READY FOR user.sh
 -------------------------------------------------------------------------
 "
